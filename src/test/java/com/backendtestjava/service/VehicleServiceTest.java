@@ -5,7 +5,8 @@ import com.backendtestjava.model.enums.ColorEnum;
 import com.backendtestjava.model.enums.VehicleBrandEnum;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
 import com.backendtestjava.repository.VehicleRepository;
-import jakarta.validation.ConstraintViolationException;
+import com.backendtestjava.service.impl.VehicleServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -13,28 +14,32 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
-public class VehicleServiceTest {
+@ExtendWith(SpringExtension.class)
+class VehicleServiceTest {
 
     @Mock
     private VehicleRepository vehicleRepository;
 
     @InjectMocks
-    private VehicleService vehicleService;
+    private VehicleServiceImpl vehicleService;
 
-    @Test
-    public void shouldCreateVehicleWithSuccess() {
+    private Vehicle vehicle;
 
-        var vehicle = new Vehicle();
+    @BeforeEach
+    public void setUp() {
+        vehicle = new Vehicle();
         vehicle.setBrand(VehicleBrandEnum.FIAT);
         vehicle.setModel("CRONOS");
         vehicle.setColor(ColorEnum.BRANCO);
@@ -42,41 +47,74 @@ public class VehicleServiceTest {
         vehicle.setType(VehicleTypeEnum.CAR);
         vehicle.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         vehicle.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+    }
 
+    @Test
+    public void shouldCreateVehicleWithSuccess() {
         when(vehicleRepository.save(any(Vehicle.class))).thenReturn(vehicle);
 
-        var savedVehicle = vehicleService.save(vehicle);
-
-        verify(vehicleRepository).save(any(Vehicle.class));
+        Vehicle savedVehicle = vehicleService.save(vehicle);
 
         ArgumentCaptor<Vehicle> vehicleCaptor = forClass(Vehicle.class);
         verify(vehicleRepository).save(vehicleCaptor.capture());
 
         Vehicle capturedVehicle = vehicleCaptor.getValue();
-        assertEquals("FIAT", capturedVehicle.getBrand());
+
+        assertEquals(VehicleBrandEnum.FIAT, capturedVehicle.getBrand());
         assertEquals("CRONOS", capturedVehicle.getModel());
-        assertEquals("BRANCO", capturedVehicle.getColor());
+        assertEquals(ColorEnum.BRANCO, capturedVehicle.getColor());
         assertEquals("OCR5YBC", capturedVehicle.getLicencePlate());
-        assertEquals("CAR", capturedVehicle.getType());
+        assertEquals(VehicleTypeEnum.CAR, capturedVehicle.getType());
 
         assertNotNull(savedVehicle);
     }
 
     @Test
-    public void shouldCreateVehicleWithValidationError() {
+    public void shouldFindVehicleByIdWithSuccess() {
+        UUID vehicleId = UUID.randomUUID();
+        when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(vehicle));
 
-        var vehicle = new Vehicle();
-        vehicle.setModel(null);
-        vehicle.setColor(ColorEnum.BRANCO);
-        vehicle.setLicencePlate(null);
-        vehicle.setType(VehicleTypeEnum.CAR);
-        vehicle.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
-        vehicle.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+        Optional<Vehicle> foundVehicle = vehicleService.findById(vehicleId);
 
-        assertThrows(ConstraintViolationException.class, () -> {
-            vehicleService.save(vehicle);
-        });
+        assertTrue(foundVehicle.isPresent());
+        assertEquals(vehicle, foundVehicle.get());
+    }
 
-        verify(vehicleRepository, never()).save(any(Vehicle.class));
+    @Test
+    public void shouldReturnEmptyWhenVehicleNotFound() {
+        UUID vehicleId = UUID.randomUUID();
+        when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.empty());
+
+        Optional<Vehicle> foundVehicle = vehicleService.findById(vehicleId);
+
+        assertFalse(foundVehicle.isPresent());
+    }
+
+    @Test
+    public void shouldDeleteVehicleWithSuccess() {
+        vehicleService.delete(vehicle);
+
+        verify(vehicleRepository, times(1)).delete(vehicle);
+    }
+
+    @Test
+    public void shouldFindVehicleByLicencePlateWithSuccess() {
+        String licencePlate = "OCR5YBC";
+        when(vehicleRepository.findByLicencePlate(licencePlate)).thenReturn(Optional.of(vehicle));
+
+        Optional<Vehicle> foundVehicle = vehicleService.findByLicencePlate(licencePlate);
+
+        assertTrue(foundVehicle.isPresent());
+        assertEquals(vehicle, foundVehicle.get());
+    }
+
+    @Test
+    public void shouldReturnEmptyWhenVehicleNotFoundByLicencePlate() {
+        String licencePlate = "INVALID123";
+        when(vehicleRepository.findByLicencePlate(licencePlate)).thenReturn(Optional.empty());
+
+        Optional<Vehicle> foundVehicle = vehicleService.findByLicencePlate(licencePlate);
+
+        assertFalse(foundVehicle.isPresent());
     }
 }

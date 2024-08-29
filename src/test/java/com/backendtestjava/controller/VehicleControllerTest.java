@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class VehicleControllerTest {
+class VehicleControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -51,7 +51,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void shouldCreateVehicleWithSuccess() throws Exception {
+    void shouldCreateVehicleWithSuccess() throws Exception {
         var vehicleJson = createVehicleJson("CRONOS", "BRANCO", "OCR5YBC", "CAR");
 
         mockMvc.perform(post("/vehicles")
@@ -61,7 +61,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void shouldReturnBadRequestWhenVehicleDataIsInvalid() throws Exception {
+    void shouldReturnBadRequestWhenVehicleDataIsInvalid() throws Exception {
         var incompleteVehicleJson = """
                 {
                     "brand": "FIAT",
@@ -83,7 +83,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void shouldUpdateVehicleWithSuccess() throws Exception {
+    void shouldUpdateVehicleWithSuccess() throws Exception {
         UUID vehicleId = UUID.randomUUID();
         Vehicle existingVehicle = createExistingVehicle(vehicleId);
         String updatedVehicleJson = createVehicleJson("ARGO", "PRETO", "XYZ1234", "CAR");
@@ -101,7 +101,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void shouldReturnNotFoundWhenUpdatingNonExistentVehicle() throws Exception {
+    void shouldReturnNotFoundWhenUpdatingNonExistentVehicle() throws Exception {
         UUID vehicleId = UUID.randomUUID();
         var vehicleJson = createVehicleJson("CRONOS", "BRANCO", "OCR5YBC", "CAR");
 
@@ -112,7 +112,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void shouldDeleteVehicleWithSuccess() throws Exception {
+    void shouldDeleteVehicleWithSuccess() throws Exception {
         UUID vehicleId = UUID.randomUUID();
         Vehicle existingVehicle = createExistingVehicle(vehicleId);
 
@@ -123,7 +123,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void shouldReturnNotFoundWhenDeletingNonExistentVehicle() throws Exception {
+    void shouldReturnNotFoundWhenDeletingNonExistentVehicle() throws Exception {
         UUID vehicleId = UUID.randomUUID();
 
         mockMvc.perform(delete("/vehicles/" + vehicleId))
