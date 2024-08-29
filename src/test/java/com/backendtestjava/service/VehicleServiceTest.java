@@ -4,6 +4,7 @@ import com.backendtestjava.model.Vehicle;
 import com.backendtestjava.model.enums.ColorEnum;
 import com.backendtestjava.model.enums.VehicleBrandEnum;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
+import com.backendtestjava.repository.VehicleRepository;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

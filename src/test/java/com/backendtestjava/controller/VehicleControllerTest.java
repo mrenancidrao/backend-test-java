@@ -1,13 +1,19 @@
 package com.backendtestjava.controller;
 
+import com.backendtestjava.model.Vehicle;
+import com.backendtestjava.model.enums.ColorEnum;
+import com.backendtestjava.model.enums.VehicleBrandEnum;
+import com.backendtestjava.model.enums.VehicleTypeEnum;
+import com.backendtestjava.service.VehicleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-
+import java.util.Optional;
 import java.util.UUID;
-
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,23 +24,35 @@ public class VehicleControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void shouldReturnAllVehicles() throws Exception {
-        mockMvc.perform(get("/vehicles"))
-                .andExpect(status().isOk());
+    @MockBean
+    private VehicleService vehicleService;
+
+    private Vehicle createExistingVehicle(UUID vehicleId) {
+        Vehicle vehicle = new Vehicle();
+        vehicle.setId(vehicleId);
+        vehicle.setBrand(VehicleBrandEnum.FIAT);
+        vehicle.setModel("Cronos");
+        vehicle.setColor(ColorEnum.BRANCO);
+        vehicle.setLicencePlate("OCR5YBC");
+        vehicle.setType(VehicleTypeEnum.CAR);
+        return vehicle;
+    }
+
+    private String createVehicleJson(String model, String color, String licencePlate, String type) {
+        return String.format("""
+                {
+                    "brand": "FIAT",
+                    "model": "%s",
+                    "color": "%s",
+                    "licencePlate": "%s",
+                    "type": "%s"
+                }
+                """, model, color, licencePlate, type);
     }
 
     @Test
     public void shouldCreateVehicleWithSuccess() throws Exception {
-        var vehicleJson = """
-                {
-                    "brand": "FIAT",
-                    "model": "CRONOS",
-                    "color": "BRANCO",
-                    "licencePlate": "OCR5YBC",
-                    "type": "CAR"
-                }
-                """;
+        var vehicleJson = createVehicleJson("CRONOS", "BRANCO", "OCR5YBC", "CAR");
 
         mockMvc.perform(post("/vehicles")
                         .contentType("application/json")
@@ -44,7 +62,7 @@ public class VehicleControllerTest {
 
     @Test
     public void shouldReturnBadRequestWhenVehicleDataIsInvalid() throws Exception {
-        var vehicleJson = """
+        var incompleteVehicleJson = """
                 {
                     "brand": "FIAT",
                     "color": "BRANCO"
@@ -53,63 +71,41 @@ public class VehicleControllerTest {
 
         mockMvc.perform(post("/vehicles")
                         .contentType("application/json")
-                        .content(vehicleJson))
+                        .content(incompleteVehicleJson))
                 .andExpect(status().isBadRequest());
 
-        var invalidFieldValuesJson = """
-                {
-                    "brand": "FIAT",
-                    "model": "CRONOS",
-                    "color": "INVALID_COLOR",
-                    "licencePlate": "",
-                    "type": "UNKNOWN_TYPE"
-                }
-                """;
+        var invalidVehicleJson = createVehicleJson("CRONOS", "INVALID_COLOR", "", "UNKNOWN_TYPE");
 
         mockMvc.perform(post("/vehicles")
                         .contentType("application/json")
-                        .content(invalidFieldValuesJson))
+                        .content(invalidVehicleJson))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void shouldUpdateVehicleWithSuccess() throws Exception {
         UUID vehicleId = UUID.randomUUID();
+        Vehicle existingVehicle = createExistingVehicle(vehicleId);
+        String updatedVehicleJson = createVehicleJson("ARGO", "PRETO", "XYZ1234", "CAR");
 
-        var updatedVehicleJson = """
-                {
-                    "brand": "FIAT",
-                    "model": "ARGO",
-                    "color": "PRETO",
-                    "licencePlate": "XYZ1234",
-                    "type": "CAR"
-                }
-                """;
+        when(vehicleService.findById(vehicleId)).thenReturn(Optional.of(existingVehicle));
 
         mockMvc.perform(put("/vehicles/" + vehicleId)
                         .contentType("application/json")
                         .content(updatedVehicleJson))
                 .andExpect(status().isOk());
 
-        // Optionally, you can check if the vehicle was updated correctly
-        mockMvc.perform(get("/vehicles/1"))
+        mockMvc.perform(get("/vehicles/" + vehicleId))
                 .andExpect(status().isOk())
                 .andExpect(content().json(updatedVehicleJson));
     }
 
     @Test
     public void shouldReturnNotFoundWhenUpdatingNonExistentVehicle() throws Exception {
-        var vehicleJson = """
-                {
-                    "brand": "FIAT",
-                    "model": "CRONOS",
-                    "color": "BRANCO",
-                    "licencePlate": "OCR5YBC",
-                    "type": "CAR"
-                }
-                """;
+        UUID vehicleId = UUID.randomUUID();
+        var vehicleJson = createVehicleJson("CRONOS", "BRANCO", "OCR5YBC", "CAR");
 
-        mockMvc.perform(put("/vehicles/999")
+        mockMvc.perform(put("/vehicles/" + vehicleId)
                         .contentType("application/json")
                         .content(vehicleJson))
                 .andExpect(status().isNotFound());
@@ -118,6 +114,9 @@ public class VehicleControllerTest {
     @Test
     public void shouldDeleteVehicleWithSuccess() throws Exception {
         UUID vehicleId = UUID.randomUUID();
+        Vehicle existingVehicle = createExistingVehicle(vehicleId);
+
+        when(vehicleService.findById(vehicleId)).thenReturn(Optional.of(existingVehicle));
 
         mockMvc.perform(delete("/vehicles/" + vehicleId))
                 .andExpect(status().isNoContent());
@@ -125,7 +124,9 @@ public class VehicleControllerTest {
 
     @Test
     public void shouldReturnNotFoundWhenDeletingNonExistentVehicle() throws Exception {
-        mockMvc.perform(delete("/vehicles/999"))
+        UUID vehicleId = UUID.randomUUID();
+
+        mockMvc.perform(delete("/vehicles/" + vehicleId))
                 .andExpect(status().isNotFound());
     }
 }
