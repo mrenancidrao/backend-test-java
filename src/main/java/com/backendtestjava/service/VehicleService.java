@@ -12,8 +12,6 @@ import java.util.UUID;
 public interface VehicleService {
     Vehicle save(Vehicle vehicle);
 
-    List<Vehicle> findAll();
-
     Optional<Vehicle> findById(UUID id);
 
     void delete(Vehicle vehicle);

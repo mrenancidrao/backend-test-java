@@ -6,6 +6,7 @@ import com.backendtestjava.model.enums.VehicleBrandEnum;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
 import com.backendtestjava.repository.VehicleRepository;
 import com.backendtestjava.service.VehicleService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +21,8 @@ public class VehicleServiceImpl implements VehicleService {
     VehicleRepository vehicleRepository;
 
     @Override
-    public Vehicle save(Vehicle vehicle) {
+    public Vehicle save(@Valid Vehicle vehicle) {
         return vehicleRepository.save(vehicle);
-    }
-
-    @Override
-    public List<Vehicle> findAll() {
-        return vehicleRepository.findAll();
     }
 
     @Override

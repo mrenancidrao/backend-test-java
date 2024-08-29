@@ -8,8 +8,8 @@ import com.backendtestjava.model.enums.VehicleStatusEnum;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
 import com.backendtestjava.service.VehicleService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +24,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/vehicles")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@AllArgsConstructor
 public class VehicleController {
 
-    @Autowired
     VehicleService vehicleService;
 
     @PostMapping
