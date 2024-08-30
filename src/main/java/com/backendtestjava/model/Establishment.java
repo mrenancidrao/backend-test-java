@@ -1,12 +1,10 @@
 package com.backendtestjava.model;
 
-import com.backendtestjava.model.enums.ColorEnum;
-import com.backendtestjava.model.enums.VehicleBrandEnum;
-import com.backendtestjava.model.enums.VehicleStatusEnum;
-import com.backendtestjava.model.enums.VehicleTypeEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -18,7 +16,7 @@ import java.util.UUID;
 @Data
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Vehicle implements Serializable {
+public class Establishment implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -29,27 +27,26 @@ public class Vehicle implements Serializable {
     private UUID id;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private VehicleBrandEnum brand;
-
-    @NotNull
-    private String model;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private ColorEnum color;
+    private String name;
 
     @NotNull
     @Column(unique = true)
-    private String licencePlate;
+    private String cnpj;
+
+    @Embedded
+    @NotNull
+    private Address address;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private VehicleTypeEnum type;
+    private String phone;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private VehicleStatusEnum status;
+    @Min(0) @Max(9999)
+    private int numberCarSpaces;
+
+    @NotNull
+    @Min(0) @Max(9999)
+    private int numberMotorcycleSpaces;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime creationDate;

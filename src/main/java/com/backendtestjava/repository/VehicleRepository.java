@@ -16,7 +16,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
 
     @Query("SELECT v FROM Vehicle v WHERE "
             + "(:brand IS NULL OR v.brand = :brand) AND "
-            + "(:model IS NULL OR v.model LIKE %:model%) AND "
+            + "(:model IS NULL OR v.model ILIKE %:model%) AND "
             + "(:color IS NULL OR v.color = :color) AND "
             + "(:type IS NULL OR v.type = :type)")
     List<Vehicle> findByFilters(@Param("brand") VehicleBrandEnum brand,

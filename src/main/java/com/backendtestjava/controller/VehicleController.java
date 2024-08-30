@@ -10,6 +10,7 @@ import com.backendtestjava.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +25,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/vehicles")
 @CrossOrigin(origins = "*", maxAge = 3600)
-@AllArgsConstructor
 public class VehicleController {
 
+    @Autowired
     VehicleService vehicleService;
 
     @PostMapping
@@ -34,6 +35,7 @@ public class VehicleController {
         var vehicle = new Vehicle();
 
         BeanUtils.copyProperties(vehicleDto, vehicle);
+        vehicle.setLicencePlate(vehicleDto.licencePlate().toUpperCase());
         vehicle.setStatus(VehicleStatusEnum.NOT_PARKED);
         vehicle.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         vehicle.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
@@ -62,15 +64,10 @@ public class VehicleController {
 
         var vehicleModel = vehicleOptional.get();
         BeanUtils.copyProperties(vehicleDto, vehicleModel);
+        vehicleModel.setLicencePlate(vehicleDto.licencePlate().toUpperCase());
         vehicleModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 
         return ResponseEntity.status(HttpStatus.OK).body(vehicleService.save(vehicleModel));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getOneVehicle(@PathVariable(value = "id") UUID id){
-        Optional<Vehicle> vehicleModelOptional = vehicleService.findById(id);
-        return vehicleModelOptional.<ResponseEntity<Object>>map(vehicle -> ResponseEntity.status(HttpStatus.OK).body(vehicle)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Veículo não encontrado."));
     }
 
     @GetMapping
@@ -89,9 +86,9 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
-    @GetMapping("/licensePlate/{licensePlate}")
+    @GetMapping("/{licensePlate}")
     public ResponseEntity<Object> getVehicleByLicensePlate(@PathVariable(value = "licensePlate") String licensePlate) {
-        Optional<Vehicle> vehicleModelOptional = vehicleService.findByLicencePlate(licensePlate);
+        Optional<Vehicle> vehicleModelOptional = vehicleService.findByLicencePlate(licensePlate.toUpperCase());
         return vehicleModelOptional.<ResponseEntity<Object>>map(vehicle -> ResponseEntity.status(HttpStatus.OK).body(vehicle)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Veículo não encontrado."));
     }
 }
