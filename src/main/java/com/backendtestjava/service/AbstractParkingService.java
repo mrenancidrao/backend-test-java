@@ -28,5 +28,4 @@ public abstract class AbstractParkingService implements ParkingService {
     public Optional<Parking> findByVehicleAndEstablishmentAndExitDateTimeIsNull(Vehicle vehicle, Establishment establishment) {
         return parkingRepository.findByVehicleAndEstablishmentAndExitDateTimeIsNull(vehicle, establishment);
     }
-
 }

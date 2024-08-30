@@ -4,7 +4,6 @@ import com.backendtestjava.config.SpringContext;
 import com.backendtestjava.model.Establishment;
 import com.backendtestjava.model.Parking;
 import com.backendtestjava.model.Vehicle;
-import com.backendtestjava.model.dtos.ParkingDto;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
 
 import java.util.List;
@@ -21,6 +20,8 @@ public interface ParkingService {
     Optional<Parking> findByVehicleAndExitDateTimeIsNull(Vehicle vehicle);
 
     Optional<Parking> findByVehicleAndEstablishmentAndExitDateTimeIsNull(Vehicle vehicle, Establishment establishment);
+
+    Long availableLimit(Establishment establishment);
 
     /**
      * Qualifica o Serviço do Parking através do typeVehicle usando o pattern strategy.

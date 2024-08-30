@@ -1,7 +1,9 @@
 package com.backendtestjava.service.impl;
 
+import com.backendtestjava.model.Establishment;
 import com.backendtestjava.model.Parking;
 import com.backendtestjava.model.Vehicle;
+import com.backendtestjava.model.enums.VehicleTypeEnum;
 import com.backendtestjava.service.AbstractParkingService;
 import com.backendtestjava.service.EstablishmentService;
 import com.backendtestjava.service.VehicleService;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.UUID;
 
 @Service("car")
@@ -24,11 +27,15 @@ public class CarParkingServiceImpl extends AbstractParkingService {
     @Override
     public Parking parkVehicle(Vehicle vehicle, UUID establishmentId) {
 
+        if (vehicle.isParked()) {
+            throw new IllegalStateException("O carro já está estacionado");
+        }
+
         var establishment = establishmentService.findById(establishmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Estacionamento não encontrado"));
 
-        if (vehicle.isParked()) {
-            throw new IllegalStateException("O carro já está estacionado");
+        if (availableLimit(establishment) < 1L) {
+            throw new IllegalStateException("Não há vagas disponíveis para carro");
         }
 
         Parking parking = new Parking();
@@ -54,5 +61,16 @@ public class CarParkingServiceImpl extends AbstractParkingService {
         parking.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 
         return parkingRepository.save(parking);
+    }
+
+    @Override
+    public Long availableLimit(Establishment establishment) {
+        var parkingList = parkingRepository.findAllByEstablishmentAndExitDateTimeIsNull(establishment);
+
+        Long parkeds = parkingList.stream()
+                .filter(parking -> parking.getVehicle().getType().equals(VehicleTypeEnum.CAR))
+                .count();
+
+        return establishment.getNumberCarSpaces() - parkeds;
     }
 }
