@@ -4,14 +4,15 @@ import com.backendtestjava.config.SpringContext;
 import com.backendtestjava.model.Establishment;
 import com.backendtestjava.model.Parking;
 import com.backendtestjava.model.Vehicle;
+import com.backendtestjava.model.dtos.ParkingDto;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
 
 import java.util.Optional;
 
 public interface ParkingService {
-    Parking parkVehicle(Parking parking);
+    Parking parkVehicle(ParkingDto parkingDto);
 
-    Parking unparkVehicle(Parking parking);
+    Parking unparkVehicle(ParkingDto parkingDto);
 
     Optional<Parking> findByVehicleAndExitDateTimeIsNull(Vehicle vehicle);
 

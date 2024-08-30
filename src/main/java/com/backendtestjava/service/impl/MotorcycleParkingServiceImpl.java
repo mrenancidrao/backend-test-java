@@ -1,25 +1,72 @@
 package com.backendtestjava.service.impl;
 
 import com.backendtestjava.model.Parking;
-import com.backendtestjava.repository.ParkingRepository;
+import com.backendtestjava.model.dtos.ParkingDto;
 import com.backendtestjava.service.AbstractParkingService;
+import com.backendtestjava.service.EstablishmentService;
+import com.backendtestjava.service.VehicleService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 @Service("motorcycle")
+@AllArgsConstructor
 public class MotorcycleParkingServiceImpl extends AbstractParkingService {
-    ParkingRepository parkingRepository;
+    private final VehicleService vehicleService;
+    private final EstablishmentService establishmentService;
+
+//    @Override
+//    public Parking parkVehicle(Parking parking) {
+//
+//        //aqui logica de validar se tem vaga
+//
+//        return parkingRepository.save(parking);
+//    }
+//
+//    @Override
+//    public Parking unparkVehicle(Parking parking) {
+//        //aqui logica de validações se encontra veiculo e estacionamento e tirar da controller
+//
+//        return parkingRepository.save(parking);
+//    }
 
     @Override
-    public Parking parkVehicle(Parking parking) {
+    public Parking parkVehicle(ParkingDto parkingDto) {
+        var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
+                .orElseThrow(() -> new IllegalArgumentException("Moto não encontrado"));
 
-        //aqui logica de validar se tem vaga
+        var establishment = establishmentService.findById(parkingDto.establishmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Estacionamento não encontrado"));
+
+        if (vehicle.isParked()) {
+            throw new IllegalStateException("A moto já está estacionado");
+        }
+
+        Parking parking = new Parking();
+        parking.setVehicle(vehicle);
+        parking.setEstablishment(establishment);
+        parking.setEntryDateTime(LocalDateTime.now(ZoneId.of("UTC")));
+        parking.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
+        parking.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 
         return parkingRepository.save(parking);
     }
 
     @Override
-    public Parking unparkVehicle(Parking parking) {
-        //aqui logica de validações se encontra veiculo e estacionamento e tirar da controller
+    public Parking unparkVehicle(ParkingDto parkingDto) {
+        var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
+                .orElseThrow(() -> new IllegalArgumentException("Moto não encontrada"));
+
+        var establishment = establishmentService.findById(parkingDto.establishmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Estacionamento não encontrado"));
+
+        var parking = parkingRepository.findByVehicleAndEstablishmentAndExitDateTimeIsNull(vehicle, establishment)
+                .orElseThrow(() -> new IllegalArgumentException("Moto não está no estacionamento"));
+
+        parking.setExitDateTime(LocalDateTime.now(ZoneId.of("UTC")));
+        parking.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 
         return parkingRepository.save(parking);
     }

@@ -4,6 +4,7 @@ import com.backendtestjava.model.Vehicle;
 import com.backendtestjava.model.enums.ColorEnum;
 import com.backendtestjava.model.enums.VehicleBrandEnum;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
+import com.backendtestjava.repository.ParkingRepository;
 import com.backendtestjava.repository.VehicleRepository;
 import com.backendtestjava.service.impl.VehicleServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,9 @@ class VehicleServiceTest {
 
     @Mock
     private VehicleRepository vehicleRepository;
+
+    @Mock
+    private ParkingRepository parkingRepository;
 
     @InjectMocks
     private VehicleServiceImpl vehicleService;

@@ -11,9 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-
 @RestController
 @RequestMapping("/parking")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -28,45 +25,25 @@ public class ParkingController {
 
     @PostMapping("/getIn")
     public ResponseEntity<Object> parkVehicle(@RequestBody @Valid ParkingDto parkingDto) {
-        var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate());
-        var establishment = establishmentService.findById(parkingDto.establishmentId());
-
-        if(!vehicle.isPresent() || !establishment.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Veículo ou estacionamento não encontrado");
+        try {
+            var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate());
+            Parking parkedVehicle = ParkingService.qualifier(vehicle.get().getType()).parkVehicle(parkingDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(parkedVehicle);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
         }
-
-        if(vehicle.get().isParked()) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("O veículo já está estacionado");
-        }
-
-        var parking = new Parking();
-        parking.setVehicle(vehicle.get());
-        parking.setEstablishment(establishment.get());
-        parking.setEntryDateTime(LocalDateTime.now(ZoneId.of("UTC")));
-        parking.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
-        parking.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(ParkingService.qualifier(parking.getVehicle().getType()).parkVehicle(parking));
     }
 
     @PostMapping("/getOut")
     public ResponseEntity<Object> unparkVehicle(@RequestBody @Valid ParkingDto parkingDto) {
-        var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate());
-        var establishment = establishmentService.findById(parkingDto.establishmentId());
-
-        if(!vehicle.isPresent() || !establishment.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Veículo ou estacionamento não encontrado");
+        try {
+            var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate());
+            Parking unparkedVehicle = ParkingService.qualifier(vehicle.get().getType()).unparkVehicle(parkingDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(unparkedVehicle);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-        var parking = parkingService.findByVehicleAndEstablishmentAndExitDateTimeIsNull(vehicle.get(), establishment.get());
-        if (!parking.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Veículo não está no estacionamento");
-        }
-
-        var parkingUpdated = parking.get();
-        parkingUpdated.setExitDateTime(LocalDateTime.now(ZoneId.of("UTC")));
-        parkingUpdated.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(ParkingService.qualifier(parkingUpdated.getVehicle().getType()).unparkVehicle(parkingUpdated));
     }
 }
