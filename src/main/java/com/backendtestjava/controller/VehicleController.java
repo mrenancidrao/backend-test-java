@@ -4,7 +4,6 @@ import com.backendtestjava.model.Vehicle;
 import com.backendtestjava.model.dtos.VehicleDto;
 import com.backendtestjava.model.enums.ColorEnum;
 import com.backendtestjava.model.enums.VehicleBrandEnum;
-import com.backendtestjava.model.enums.VehicleStatusEnum;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
 import com.backendtestjava.service.VehicleService;
 import jakarta.validation.Valid;
@@ -25,9 +24,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/vehicles")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@AllArgsConstructor
 public class VehicleController {
 
-    @Autowired
     VehicleService vehicleService;
 
     @PostMapping
@@ -36,7 +35,6 @@ public class VehicleController {
 
         BeanUtils.copyProperties(vehicleDto, vehicle);
         vehicle.setLicencePlate(vehicleDto.licencePlate().toUpperCase());
-        vehicle.setStatus(VehicleStatusEnum.NOT_PARKED);
         vehicle.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         vehicle.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 

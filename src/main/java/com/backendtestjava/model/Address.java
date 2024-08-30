@@ -5,10 +5,16 @@ import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Data
 @Embeddable
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Address {
+public class Address implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @NotNull
     private String street;

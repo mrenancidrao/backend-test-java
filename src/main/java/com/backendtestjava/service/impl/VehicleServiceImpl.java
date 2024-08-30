@@ -4,6 +4,7 @@ import com.backendtestjava.model.Vehicle;
 import com.backendtestjava.model.enums.ColorEnum;
 import com.backendtestjava.model.enums.VehicleBrandEnum;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
+import com.backendtestjava.repository.ParkingRepository;
 import com.backendtestjava.repository.VehicleRepository;
 import com.backendtestjava.service.VehicleService;
 import jakarta.validation.Valid;
@@ -19,6 +20,8 @@ import java.util.UUID;
 public class VehicleServiceImpl implements VehicleService {
 
     VehicleRepository vehicleRepository;
+
+    ParkingRepository parkingRepository;
 
     @Override
     public Vehicle save(@Valid Vehicle vehicle) {
@@ -42,6 +45,13 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Optional<Vehicle> findByLicencePlate(String licencePlate) {
-        return vehicleRepository.findByLicencePlate(licencePlate);
+        Optional<Vehicle> vehicleOpt = vehicleRepository.findByLicencePlate(licencePlate);
+
+        if (vehicleOpt.isPresent()) {
+            Vehicle vehicle = vehicleOpt.get();
+            boolean isParked = parkingRepository.findByVehicleAndExitDateTimeIsNull(vehicle).isPresent();
+            vehicle.setParked(isParked);
+        }
+        return vehicleOpt;
     }
 }
