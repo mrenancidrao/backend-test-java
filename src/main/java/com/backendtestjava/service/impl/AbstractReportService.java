@@ -7,15 +7,13 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class ReportServiceImpl implements ReportService {
+public abstract class AbstractReportService implements ReportService {
 
     @Override
     public InputStreamResource generateReport(String title, List<String> columnHeaders, List<Map<String, String>> rows, Map<String, Long> summary) {
@@ -34,12 +32,10 @@ public class ReportServiceImpl implements ReportService {
             }
             Table table = new Table(columnWidths);
 
-            // Adicionar cabeçalhos da tabela
             for (String header : columnHeaders) {
                 table.addCell(header);
             }
 
-            // Preencher a tabela com os dados
             for (Map<String, String> row : rows) {
                 for (String header : columnHeaders) {
                     table.addCell(row.get(header));  // Pega o valor correspondente ao header na linha
@@ -48,7 +44,6 @@ public class ReportServiceImpl implements ReportService {
 
             document.add(table);
 
-            // Adicionar o sumário
             document.add(new Paragraph("\nResumo:"));
             for (Map.Entry<String, Long> entry : summary.entrySet()) {
                 document.add(new Paragraph(entry.getKey() + ": " + entry.getValue()));
