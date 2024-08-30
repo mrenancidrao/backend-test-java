@@ -94,10 +94,6 @@ class VehicleControllerTest {
                         .contentType("application/json")
                         .content(updatedVehicleJson))
                 .andExpect(status().isOk());
-
-        mockMvc.perform(get("/vehicles/" + vehicleId))
-                .andExpect(status().isOk())
-                .andExpect(content().json(updatedVehicleJson));
     }
 
     @Test

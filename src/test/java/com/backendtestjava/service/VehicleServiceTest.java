@@ -50,7 +50,7 @@ class VehicleServiceTest {
     }
 
     @Test
-    public void shouldCreateVehicleWithSuccess() {
+    void shouldCreateVehicleWithSuccess() {
         when(vehicleRepository.save(any(Vehicle.class))).thenReturn(vehicle);
 
         Vehicle savedVehicle = vehicleService.save(vehicle);
@@ -70,7 +70,7 @@ class VehicleServiceTest {
     }
 
     @Test
-    public void shouldFindVehicleByIdWithSuccess() {
+    void shouldFindVehicleByIdWithSuccess() {
         UUID vehicleId = UUID.randomUUID();
         when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(vehicle));
 
@@ -81,7 +81,7 @@ class VehicleServiceTest {
     }
 
     @Test
-    public void shouldReturnEmptyWhenVehicleNotFound() {
+    void shouldReturnEmptyWhenVehicleNotFound() {
         UUID vehicleId = UUID.randomUUID();
         when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.empty());
 
@@ -91,14 +91,14 @@ class VehicleServiceTest {
     }
 
     @Test
-    public void shouldDeleteVehicleWithSuccess() {
+    void shouldDeleteVehicleWithSuccess() {
         vehicleService.delete(vehicle);
 
         verify(vehicleRepository, times(1)).delete(vehicle);
     }
 
     @Test
-    public void shouldFindVehicleByLicencePlateWithSuccess() {
+    void shouldFindVehicleByLicencePlateWithSuccess() {
         String licencePlate = "OCR5YBC";
         when(vehicleRepository.findByLicencePlate(licencePlate)).thenReturn(Optional.of(vehicle));
 
@@ -109,7 +109,7 @@ class VehicleServiceTest {
     }
 
     @Test
-    public void shouldReturnEmptyWhenVehicleNotFoundByLicencePlate() {
+    void shouldReturnEmptyWhenVehicleNotFoundByLicencePlate() {
         String licencePlate = "INVALID123";
         when(vehicleRepository.findByLicencePlate(licencePlate)).thenReturn(Optional.empty());
 
