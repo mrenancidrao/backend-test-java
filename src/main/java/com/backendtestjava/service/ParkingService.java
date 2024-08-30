@@ -7,12 +7,16 @@ import com.backendtestjava.model.Vehicle;
 import com.backendtestjava.model.dtos.ParkingDto;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ParkingService {
-    Parking parkVehicle(ParkingDto parkingDto);
+    Parking parkVehicle(Vehicle vehicle, UUID establishmentId);
 
-    Parking unparkVehicle(ParkingDto parkingDto);
+    Parking unparkVehicle(Vehicle vehicle, UUID establishmentId);
+
+    List<Parking> findAllByEstablishment(Establishment establishment);
 
     Optional<Parking> findByVehicleAndExitDateTimeIsNull(Vehicle vehicle);
 

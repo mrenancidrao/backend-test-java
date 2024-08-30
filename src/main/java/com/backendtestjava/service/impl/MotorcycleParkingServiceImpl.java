@@ -1,7 +1,7 @@
 package com.backendtestjava.service.impl;
 
 import com.backendtestjava.model.Parking;
-import com.backendtestjava.model.dtos.ParkingDto;
+import com.backendtestjava.model.Vehicle;
 import com.backendtestjava.service.AbstractParkingService;
 import com.backendtestjava.service.EstablishmentService;
 import com.backendtestjava.service.VehicleService;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.UUID;
 
 @Service("motorcycle")
 @AllArgsConstructor
@@ -17,31 +18,14 @@ public class MotorcycleParkingServiceImpl extends AbstractParkingService {
     private final VehicleService vehicleService;
     private final EstablishmentService establishmentService;
 
-//    @Override
-//    public Parking parkVehicle(Parking parking) {
-//
-//        //aqui logica de validar se tem vaga
-//
-//        return parkingRepository.save(parking);
-//    }
-//
-//    @Override
-//    public Parking unparkVehicle(Parking parking) {
-//        //aqui logica de validações se encontra veiculo e estacionamento e tirar da controller
-//
-//        return parkingRepository.save(parking);
-//    }
-
     @Override
-    public Parking parkVehicle(ParkingDto parkingDto) {
-        var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
-                .orElseThrow(() -> new IllegalArgumentException("Moto não encontrado"));
+    public Parking parkVehicle(Vehicle vehicle, UUID establishmentId) {
 
-        var establishment = establishmentService.findById(parkingDto.establishmentId())
+        var establishment = establishmentService.findById(establishmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Estacionamento não encontrado"));
 
         if (vehicle.isParked()) {
-            throw new IllegalStateException("A moto já está estacionado");
+            throw new IllegalStateException("A moto já está estacionada");
         }
 
         Parking parking = new Parking();
@@ -55,11 +39,9 @@ public class MotorcycleParkingServiceImpl extends AbstractParkingService {
     }
 
     @Override
-    public Parking unparkVehicle(ParkingDto parkingDto) {
-        var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
-                .orElseThrow(() -> new IllegalArgumentException("Moto não encontrada"));
+    public Parking unparkVehicle(Vehicle vehicle, UUID establishmentId) {
 
-        var establishment = establishmentService.findById(parkingDto.establishmentId())
+        var establishment = establishmentService.findById(establishmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Estacionamento não encontrado"));
 
         var parking = parkingRepository.findByVehicleAndEstablishmentAndExitDateTimeIsNull(vehicle, establishment)

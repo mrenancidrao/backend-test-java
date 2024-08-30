@@ -27,7 +27,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class VehicleController {
 
-    VehicleService vehicleService;
+    private final VehicleService vehicleService;
 
     @PostMapping
     public ResponseEntity<Object> saveVehicle(@RequestBody @Valid VehicleDto vehicleDto) {

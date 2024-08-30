@@ -6,12 +6,18 @@ import com.backendtestjava.model.Vehicle;
 import com.backendtestjava.repository.ParkingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractParkingService implements ParkingService {
 
     @Autowired
     protected ParkingRepository parkingRepository;
+
+    @Override
+    public List<Parking> findAllByEstablishment(Establishment establishment) {
+        return parkingRepository.findAllByEstablishment(establishment);
+    }
 
     @Override
     public Optional<Parking> findByVehicleAndExitDateTimeIsNull(Vehicle vehicle) {

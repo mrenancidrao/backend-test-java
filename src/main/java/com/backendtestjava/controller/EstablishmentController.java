@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class EstablishmentController {
 
-    EstablishmentService establishmentService;
+    private final EstablishmentService establishmentService;
 
     @PostMapping
     public ResponseEntity<Object> saveEstablishment(@RequestBody @Valid EstablishmentDto establishmentDto) {

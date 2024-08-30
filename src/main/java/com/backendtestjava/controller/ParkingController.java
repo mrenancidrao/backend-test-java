@@ -17,17 +17,19 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class ParkingController {
 
-    ParkingService parkingService;
+    private final ParkingService parkingService;
 
-    VehicleService vehicleService;
+    private final VehicleService vehicleService;
 
-    EstablishmentService establishmentService;
+    private final EstablishmentService establishmentService;
 
     @PostMapping("/getIn")
     public ResponseEntity<Object> parkVehicle(@RequestBody @Valid ParkingDto parkingDto) {
         try {
-            var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate());
-            Parking parkedVehicle = ParkingService.qualifier(vehicle.get().getType()).parkVehicle(parkingDto);
+            var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
+                    .orElseThrow(() -> new IllegalArgumentException("Veículo não encontrado"));
+
+            Parking parkedVehicle = ParkingService.qualifier(vehicle.getType()).parkVehicle(vehicle, parkingDto.establishmentId());
             return ResponseEntity.status(HttpStatus.CREATED).body(parkedVehicle);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -39,8 +41,10 @@ public class ParkingController {
     @PostMapping("/getOut")
     public ResponseEntity<Object> unparkVehicle(@RequestBody @Valid ParkingDto parkingDto) {
         try {
-            var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate());
-            Parking unparkedVehicle = ParkingService.qualifier(vehicle.get().getType()).unparkVehicle(parkingDto);
+            var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
+                    .orElseThrow(() -> new IllegalArgumentException("Veículo não encontrado"));
+
+            Parking unparkedVehicle = ParkingService.qualifier(vehicle.getType()).unparkVehicle(vehicle, parkingDto.establishmentId());
             return ResponseEntity.status(HttpStatus.CREATED).body(unparkedVehicle);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
