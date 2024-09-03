@@ -1,7 +1,7 @@
 package com.backendtestjava.controller;
 
 import com.backendtestjava.model.Establishment;
-import com.backendtestjava.model.dtos.EstablishmentDto;
+import com.backendtestjava.model.dtos.EstablishmentDTO;
 import com.backendtestjava.service.EstablishmentService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class EstablishmentController {
     private final EstablishmentService establishmentService;
 
     @PostMapping
-    public ResponseEntity<Object> saveEstablishment(@RequestBody @Valid EstablishmentDto establishmentDto) {
+    public ResponseEntity<Object> saveEstablishment(@RequestBody @Valid EstablishmentDTO establishmentDto) {
         var establishment = new Establishment();
 
         BeanUtils.copyProperties(establishmentDto, establishment);
@@ -63,7 +63,7 @@ public class EstablishmentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateEstablishment(@PathVariable(value = "id") UUID id,
-                                                @RequestBody @Valid EstablishmentDto establishmentDto) {
+                                                @RequestBody @Valid EstablishmentDTO establishmentDto) {
         Optional<Establishment> establishmentOptional = establishmentService.findById(id);
         if(!establishmentOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estacionamento não encontrado");

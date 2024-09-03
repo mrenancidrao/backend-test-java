@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.io.Serializable;
 
-public record EstablishmentDto(@NotNull String name,
+public record EstablishmentDTO(@NotNull String name,
                                @NotNull @Pattern(regexp = "(^\\d{2})\\d{12}$") String cnpj,
                                @NotNull Address address,
                                @NotNull String phone,

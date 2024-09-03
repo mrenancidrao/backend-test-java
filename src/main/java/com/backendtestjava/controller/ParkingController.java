@@ -1,7 +1,7 @@
 package com.backendtestjava.controller;
 
 import com.backendtestjava.model.Parking;
-import com.backendtestjava.model.dtos.ParkingDto;
+import com.backendtestjava.model.dtos.ParkingDTO;
 import com.backendtestjava.service.EstablishmentService;
 import com.backendtestjava.service.ParkingService;
 import com.backendtestjava.service.VehicleService;
@@ -24,7 +24,7 @@ public class ParkingController {
     private final EstablishmentService establishmentService;
 
     @PostMapping("/getIn")
-    public ResponseEntity<Object> parkVehicle(@RequestBody @Valid ParkingDto parkingDto) {
+    public ResponseEntity<Object> parkVehicle(@RequestBody @Valid ParkingDTO parkingDto) {
 
         try {
             var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
@@ -40,7 +40,7 @@ public class ParkingController {
     }
 
     @PostMapping("/getOut")
-    public ResponseEntity<Object> unparkVehicle(@RequestBody @Valid ParkingDto parkingDto) {
+    public ResponseEntity<Object> unparkVehicle(@RequestBody @Valid ParkingDTO parkingDto) {
         try {
             var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
                     .orElseThrow(() -> new IllegalArgumentException("Veículo não encontrado"));

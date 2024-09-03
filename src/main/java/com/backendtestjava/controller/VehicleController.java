@@ -1,7 +1,7 @@
 package com.backendtestjava.controller;
 
 import com.backendtestjava.model.Vehicle;
-import com.backendtestjava.model.dtos.VehicleDto;
+import com.backendtestjava.model.dtos.VehicleDTO;
 import com.backendtestjava.model.enums.ColorEnum;
 import com.backendtestjava.model.enums.VehicleBrandEnum;
 import com.backendtestjava.model.enums.VehicleTypeEnum;
@@ -29,7 +29,7 @@ public class VehicleController {
     private final VehicleService vehicleService;
 
     @PostMapping
-    public ResponseEntity<Object> saveVehicle(@RequestBody @Valid VehicleDto vehicleDto) {
+    public ResponseEntity<Object> saveVehicle(@RequestBody @Valid VehicleDTO vehicleDto) {
         Optional<Vehicle> vehicleOpt = vehicleService.findByLicencePlate(vehicleDto.licencePlate().toUpperCase());
         if (vehicleOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Placa já cadastrada");
@@ -58,7 +58,7 @@ public class VehicleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateVehicle(@PathVariable(value = "id") UUID id,
-                                                @RequestBody @Valid VehicleDto vehicleDto) {
+                                                @RequestBody @Valid VehicleDTO vehicleDto) {
         Optional<Vehicle> vehicleOptional = vehicleService.findById(id);
         if(!vehicleOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Veículo não encontrado");
