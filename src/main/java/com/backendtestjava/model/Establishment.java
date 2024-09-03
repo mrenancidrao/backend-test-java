@@ -42,11 +42,11 @@ public class Establishment implements Serializable {
 
     @NotNull
     @Min(0) @Max(9999)
-    private int numberCarSpaces;
+    private long numberCarSpaces;
 
     @NotNull
     @Min(0) @Max(9999)
-    private int numberMotorcycleSpaces;
+    private long numberMotorcycleSpaces;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime creationDate;

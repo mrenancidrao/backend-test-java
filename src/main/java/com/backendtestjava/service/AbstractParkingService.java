@@ -3,6 +3,7 @@ package com.backendtestjava.service;
 import com.backendtestjava.model.Establishment;
 import com.backendtestjava.model.Parking;
 import com.backendtestjava.model.Vehicle;
+import com.backendtestjava.model.enums.VehicleTypeEnum;
 import com.backendtestjava.repository.ParkingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,5 +28,21 @@ public abstract class AbstractParkingService implements ParkingService {
     @Override
     public Optional<Parking> findByVehicleAndEstablishmentAndExitDateTimeIsNull(Vehicle vehicle, Establishment establishment) {
         return parkingRepository.findByVehicleAndEstablishmentAndExitDateTimeIsNull(vehicle, establishment);
+    }
+
+    @Override
+    public Long availableLimit(Establishment establishment, VehicleTypeEnum type) {
+
+        long availableSpaces;
+        var parkeds = parkingRepository.countParkedVehiclesByEstablishmentAndType(establishment, type);
+        if (type == VehicleTypeEnum.CAR) {
+            availableSpaces = establishment.getNumberCarSpaces();
+        } else if (type == VehicleTypeEnum.MOTORCYCLE) {
+            availableSpaces = establishment.getNumberMotorcycleSpaces();
+        } else {
+            throw new IllegalArgumentException("Tipo de veículo não encontrado");
+        }
+
+        return availableSpaces - parkeds;
     }
 }

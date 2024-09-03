@@ -21,7 +21,7 @@ public interface ParkingService {
 
     Optional<Parking> findByVehicleAndEstablishmentAndExitDateTimeIsNull(Vehicle vehicle, Establishment establishment);
 
-    Long availableLimit(Establishment establishment);
+    Long availableLimit(Establishment establishment, VehicleTypeEnum type);
 
     /**
      * Qualifica o Serviço do Parking através do typeVehicle usando o pattern strategy.

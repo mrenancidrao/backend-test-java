@@ -1,12 +1,9 @@
 package com.backendtestjava.controller;
 
-import com.backendtestjava.model.Parking;
-import com.backendtestjava.service.EstablishmentService;
-import com.backendtestjava.service.ParkingService;
-import com.backendtestjava.service.ReportService;
 import com.backendtestjava.service.impl.ReportParkingServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +22,8 @@ public class ReportController {
 
     @GetMapping("/parking/{establishmentId}")
     public ResponseEntity<InputStreamResource> exportParkingPdfReport(@PathVariable(value = "establishmentId") UUID establishmentId,
-                                                                      @RequestParam(value = "dateTimeInitial", required = false) LocalDateTime dateTimeInitial,
-                                                                      @RequestParam(value = "dateTimeFinal", required = false) LocalDateTime dateTimeFinal) {
+                                                                      @RequestParam(value = "dateTimeInitial", required = false) String dateTimeInitial,
+                                                                      @RequestParam(value = "dateTimeFinal", required = false) String dateTimeFinal) {
 
         InputStreamResource resource = reportParkingService.report(establishmentId, dateTimeInitial, dateTimeFinal);
 

@@ -38,7 +38,7 @@ public abstract class AbstractReportService implements ReportService {
 
             for (Map<String, String> row : rows) {
                 for (String header : columnHeaders) {
-                    table.addCell(row.get(header));  // Pega o valor correspondente ao header na linha
+                    table.addCell(row.get(header));
                 }
             }
 

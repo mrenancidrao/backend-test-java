@@ -9,7 +9,6 @@ import com.backendtestjava.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +30,11 @@ public class VehicleController {
 
     @PostMapping
     public ResponseEntity<Object> saveVehicle(@RequestBody @Valid VehicleDto vehicleDto) {
+        Optional<Vehicle> vehicleOpt = vehicleService.findByLicencePlate(vehicleDto.licencePlate().toUpperCase());
+        if (vehicleOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Placa já cadastrada");
+        }
+
         var vehicle = new Vehicle();
 
         BeanUtils.copyProperties(vehicleDto, vehicle);

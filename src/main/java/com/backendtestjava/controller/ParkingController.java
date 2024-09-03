@@ -25,6 +25,7 @@ public class ParkingController {
 
     @PostMapping("/getIn")
     public ResponseEntity<Object> parkVehicle(@RequestBody @Valid ParkingDto parkingDto) {
+
         try {
             var vehicle = vehicleService.findByLicencePlate(parkingDto.licensePlate())
                     .orElseThrow(() -> new IllegalArgumentException("Veículo não encontrado"));
