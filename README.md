@@ -268,7 +268,7 @@ Gera um relatório em PDF com as entradas e saídas de veículos de um estaciona
 ## Configuração para Execução
 ## Pré-requisitos
 - Java 21
-- Maven ou Gradle: Você pode usar qualquer uma dessas ferramentas para construir e rodar o projeto.
+- Gradle
 
 ## Como Executar
 - Clone o repositório:
