@@ -121,11 +121,11 @@ Retorna o estabelecimento por cnpj
             "name": "ESTACIONAMENTO DO FALCAO",
             "cnpj": "40245027000169",
             "address": {
-                "street": "RUA CORONEL JOAO CARNEIRO",
+                "street": "RUA CORONEL JOAO CORDEIRO",
                 "number": "67",
                 "city": "CAPITAL DO CEARÁ"
             },
-            "phone": "85998719999",
+            "phone": "85998654679",
             "numberCarSpaces": 10,
             "numberMotorcycleSpaces": 10
         }'`
