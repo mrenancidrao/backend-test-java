@@ -69,12 +69,12 @@ Também foi adicionada funcionalidades de autenticação com Jwt Token e geraç�
         "name": "ESTACIONAMENTO DO FALCAO",
         "cnpj": "40245027000169",
         "address": {
-            "street": "RUA CORONEL JOAO CARNEIRO",
+            "street": "RUA CORONEL JOAO CORDEIRO",
             "number": "67",
             "city": "FORTALEZA",
             "state": "CEARÁ"
         },
-        "phone": "85998719999",
+        "phone": "85997542314",
         "numberCarSpaces": 20,
         "numberMotorcycleSpaces": 10
     }'`              
