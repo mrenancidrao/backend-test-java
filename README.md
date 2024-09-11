@@ -300,12 +300,15 @@ Gera um relatório em PDF com as entradas e saídas de veículos de um estaciona
     `Authorization: Bearer <token>`
 
 
-Considerações Finais
+## Considerações Finais
+
 Este projeto é uma implementação básica de um sistema de gestão de estacionamento com autenticação JWT e geração de relatórios em PDF. 
 Como melhorias posso destacar:
 - A inclusão de camadas de handle de errors específicos para melhorar o retorno de erros para os clientes da API;
+- As implementações de ParkingService (CarParkingServiceImpl e MotorcycleParkingServiceImpl) possuem código que se repete. Seria uma boa abordagem utilizar um padrão Template Method para deixar o codigo mais limpo e reutilizável.
 - Adicionar id do estabelecimento no token para pegar essa informação automaticamente, ao invés de passar no body da request
 - Usar uma api de autenticação mais robusta como um keycloack
 - separar em microserviços
 - adicionar duração de permanencia no relatório
+- swagger para documentar a API
   
